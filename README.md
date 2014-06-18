@@ -1,12 +1,13 @@
-JavaScript ID3 Reader
+JavaScript ID3 Reader (Without HEAD Requests)
 =====================
 
-This library was originally made by Jacob Seidelin using ID3v1 for demo'ing his BinaryAjax library [http://www.nihilogic.dk/labs/id3/].
-It was then extended by me (António Afonso) to include the ID3v2 tag specification [http://www.id3.org/id3v2.4.0-structure], while I was working at Opera Software, in the context of the Unite Media Player application which was developed using server side JavaScript.
-Joshua Kifer implemented the tag reader for the QuickTime metadata information found in aac files.
-A new BufferedBinaryFile was created that extends BinaryFile in a way that only required data will be downloaded from the server. This makes it possible to read tag structures such as the Quicktime metadata without having to download the entire file as it was happening in previous versions of this library.
 
-Demo: http://www.aadsm.net/libraries/id3/#demo
+This library was originally made by Jacob Seidelin and then extended by António Afonso to include the ID3v2 tag specification.
+The library originally used a HEAD request to get the content-length of the file. The HEAD request has been removed to ensure compatability with services that don't support HEAD requests (eg Google Drive). This also reduces the overhead associated with the addtional request. The main caveat of this method is that it might fail if:
+a) The Range Header is not supported
+b) The tag reader tries to read past the end of the file
+
+A new BufferedBinaryFile was created that extends BinaryFile in a way that only required data will be downloaded from the server. This makes it possible to read tag structures such as the Quicktime metadata without having to download the entire file as it was happening in previous versions of this library.
 
 Technical Information
 ---------------------
