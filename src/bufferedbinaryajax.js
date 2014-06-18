@@ -163,7 +163,9 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
             var blockEnd = ~~(range[1]/blockSize)+1 + blockRadius;
             
             if( blockStart < 0 ) blockStart = 0;
-            if( blockEnd >= blockTotal ) blockEnd = blockTotal-1;
+            // Remove the "are we at the end check"
+            // With an unkown content-length (iLength) it is impossible to know when the end occurs
+            // if( blockEnd >= blockTotal ) blockEnd = blockTotal-1;
             
             return [blockStart, blockEnd];
         }
@@ -265,14 +267,10 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
     }
     
     function init() {
-        getHead(
-			strUrl, 
-			function(oHTTP) {
-				var iLength = parseInt(oHTTP.getResponseHeader("Content-Length"),10) || -1;
-				fncCallback(new BufferedBinaryFile(strUrl, iLength));
-			},
-            fncError
-		);
+    	// Set the length to -1 instead of the actual content-length
+    	// This may cause unexpected behaviour in the BinaryFile or BufferedBinaryFile objects
+	var iLength = -1;
+	fncCallback(new BufferedBinaryFile(strUrl, iLength));
     }
     
     init();
