@@ -130,10 +130,14 @@ function BinaryFile(strData, iDataOffset, iDataLength) {
 		return String.fromCharCode(this.getByteAt(iOffset));
 	};
 	this.toBase64 = function() {
-		return window.btoa(data);
+		// btoa is a global function (window.btoa)
+		// the reference to window is avoided for Web Worker support
+		return btoa(data);
 	};
 	this.fromBase64 = function(strBase64) {
-		data = window.atob(strBase64);
+		// atob is a global function (window.atob)
+		// the reference to window is avoided for Web Worker support
+		data = atob(strBase64);
 	};
 
     this.loadRange = function(range, callback) {
@@ -141,12 +145,16 @@ function BinaryFile(strData, iDataOffset, iDataLength) {
     };
 }
 
-var js = document.createElement('script');
-js.type = 'text/vbscript';
-js.textContent = "Function IEBinary_getByteAt(strBinary, iOffset)\r\n" +
-    "	IEBinary_getByteAt = AscB(MidB(strBinary,iOffset+1,1))\r\n" +
-    "End Function\r\n" +
-    "Function IEBinary_getLength(strBinary)\r\n" +
-    "	IEBinary_getLength = LenB(strBinary)\r\n" +
-    "End Function\r\n";
-document.getElementsByTagName('head')[0].appendChild(js);
+if (typeof(document) !== "undefined"){
+	// Give IE support for the several binary functions using VBScript
+	// Only run this in the UI thread. WebWorker threads don't have the document global
+	var js = document.createElement('script');
+	js.type = 'text/vbscript';
+	js.textContent = "Function IEBinary_getByteAt(strBinary, iOffset)\r\n" +
+	    "	IEBinary_getByteAt = AscB(MidB(strBinary,iOffset+1,1))\r\n" +
+	    "End Function\r\n" +
+	    "Function IEBinary_getLength(strBinary)\r\n" +
+	    "	IEBinary_getLength = LenB(strBinary)\r\n" +
+	    "End Function\r\n";
+	document.getElementsByTagName('head')[0].appendChild(js);
+}
