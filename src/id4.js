@@ -76,7 +76,11 @@
 
     ID4.readTagsFromData = function(data) {
         var tag = {};
-        readAtom(tag, data, 0, data.getLength());
+        // It is difficult to find the actual length of the data object.
+        // By settings this to data.getDownloadedBytesCount() we capture everything that
+        // was iterated over by the loadAtom function
+        var length = data.getDownloadedBytesCount()
+        readAtom(tag, data, 0, length);
         return tag;
     };
 
