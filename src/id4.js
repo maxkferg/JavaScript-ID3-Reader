@@ -122,6 +122,7 @@
                     switch( type ) {
                         case 'text':
                             atomData = data.getStringWithCharsetAt(dataStart, dataEnd, "UTF-8");
+                            atomData = atomData + ""; //Convert the String object to a primitive 
                             break;
                             
                         case 'uint8':
